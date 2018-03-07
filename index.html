@@ -13,6 +13,8 @@
  	<script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"
    integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
    crossorigin=""></script>
+
+   <script type="text/javascript" src='data/venues.geojson'></script>
 </head>
 <body>
 	 <div id="mapid" style="height: 97.7vh; width: 97.5vw;">
@@ -20,37 +22,116 @@
 	 </div>
 
 	 <script type="text/javascript">
-	 	var mymap = L.map('mapid').setView([39.74739, -105], 13);
+
+	 	var map = L.map('mapid').setView([59.9451, 30.3717], 13);
 
 	 	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
 		    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
 		    maxZoom: 18,
 		    id: 'mapbox.streets',
 		    accessToken: 'pk.eyJ1Ijoia29udWNob3ZhcnRlbSIsImEiOiJjajhoOGJmZmQwMDltMndrbnhnY3J5andvIn0.9iiSiT1X3i5zSU4YTr9c9w'
-		}).addTo(mymap);
+		}).addTo(map);
 
-		var geojsonFeature = {
-		    "type": "Feature",
-		    "properties": {
-		        "name": "Coors Field",
-		        "amenity": "Baseball Stadium",
-		        "popupContent": "This is where the Rockies play!"
-		    },
-		    "geometry": {
-		        "type": "Point",
-		        "coordinates": [-104.99404, 39.75621]
-		    }
-		};
+	 
+	 	var geojsonMarkerOptions = {
+			    radius: 3,
+			    color: "#000",
+			    weight: 1,
+			    opacity: 1,
+			    fillOpacity: 0.8
+			};
 
-		var myLines = [{
-		    "type": "LineString",
-		    "coordinates": [[-100, 40], [-105, 45], [-110, 55]]
-		}, {
-		    "type": "LineString",
-		    "coordinates": [[-105, 40], [-110, 45], [-115, 55]]
-		}];
+		function onEachFeature(feature, layer) {
+			
+			if (feature.properties && feature.properties.title) {
+				var popupContent = feature.properties.title;
+			}
 
-		L.geoJSON(geojsonFeature).addTo(mymap);
+			layer.bindPopup(popupContent);
+		}
+
+		L.geoJSON(venues, {
+			onEachFeature: onEachFeature,
+
+			pointToLayer: function (feature, latlng) {
+        		return L.circleMarker(latlng, geojsonMarkerOptions);
+    		},
+
+    		style: function(feature) {
+    			switch(feature.properties.label) {
+    				case 0: return {fillColor: "#1fd9d3"};
+					case 1: return {fillColor: "#ee6b7b"};
+					case 2: return {fillColor: "#4d01ff"};
+					case 3: return {fillColor: "#e3c331"};
+					case 4: return {fillColor: "#e5218d"};
+					case 5: return {fillColor: "#a4dc6f"};
+					case 6: return {fillColor: "#b5c849"};
+					case 7: return {fillColor: "#ea33d8"};
+					case 8: return {fillColor: "#2f3dd7"};
+					case 9: return {fillColor: "#91ed66"};
+					case 10: return {fillColor: "#6f65d9"};
+					case 11: return {fillColor: "#6f65d9"};
+					case 12: return {fillColor: "#ce3462"};
+					case 13: return {fillColor: "#c95e76"};
+					case 14: return {fillColor:"#4527dd"};
+					case 15: return {fillColor:"#8316f0"};
+					case 16: return {fillColor:"#3bec5e"};
+					case 17: return {fillColor:"#69eb78"};
+					case 18: return {fillColor:"#c48aea"};
+					case 19: return {fillColor:"#e07ec4"};
+					case 20: return {fillColor:"#17acf0"};
+					case 21: return {fillColor:"#39ca0d"};
+					case 22: return {fillColor:"#39ca0d"};
+					case 23: return {fillColor:"#fd9000"};
+					case 24: return {fillColor:"#51e0b8"};
+					case 25: return {fillColor:"#ec1d1d"};
+					case 26: return {fillColor:"#85cf23"};
+					case 27: return {fillColor:"#cebc18"};
+					case 28: return {fillColor:"#ccb36f"};
+					case 29: return {fillColor:"#ccb36f"}
+					case 30: return {fillColor:"#82e085"};
+					case 31: return {fillColor:"#eec083"};
+					case 32: return {fillColor:"#4fdaca"};
+					case 33: return {fillColor:"#ed9157"};
+					case 34: return {fillColor:"#194fe1"};
+					case 35: return {fillColor:"#a848d5"};
+					case 36: return {fillColor:"#7cd477"};
+					case 37: return {fillColor:"#d33ced"};
+					case 38: return {fillColor:"#96e00d"};
+					case 39: return {fillColor:"#a848d5"};
+					case 40: return {fillColor:"#ca4276"};
+					case 41: return {fillColor:"#d27952"};
+					case 42: return {fillColor:"#75d4f0"};
+					case 43: return {fillColor:"#7989d1"};
+					case 44: return {fillColor:"#58d0e2"};
+					case 45: return {fillColor:"#58d0e2"};
+					case 46: return {fillColor:"#01eeff"};
+					case 47: return {fillColor:"#f3ff01"};
+					case 48: return {fillColor:"#d29524"};
+					case 49: return {fillColor:"#e134a2"};
+					case 50: return {fillColor:"#e52d24"};
+					case 51: return {fillColor:"#5eccd2"};
+					case 52: return {fillColor:"#42ed72"};
+					case 53: return {fillColor:"#e8b283"};
+					case 54: return {fillColor:"#7e5ce6"};
+					case 55: return {fillColor:"#60b4eb"};
+					case 56: return {fillColor:"#e55b9b"};
+					case 57: return {fillColor:"#d65fde"};
+					case 58: return {fillColor:"#9fcd21"};
+					case 59: return {fillColor:"#f0f313"};
+					case 60: return {fillColor:"#08ed2a"};
+					case 61: return {fillColor:"#f13e12"};
+					case 62: return {fillColor:"#e44046"};
+					case 63: return {fillColor:"#3bcb97"};
+					case 64: return {fillColor:"#3bcb97"};
+					case 65: return {fillColor:"#e4e26a"};
+					case 66: return {fillColor:"#c54de9"};
+					case 67: return {fillColor:"#ff0178"};
+					case 68: return {fillColor:"#80a4d3"};
+					case 69: return {fillColor:"#89f0b7"};
+    			}
+    		}
+		}).addTo(map);
 
 	 </script>
 
