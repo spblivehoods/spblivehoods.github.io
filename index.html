@@ -1,47 +1,58 @@
-<!doctype html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
-        <meta name="mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-capable" content="yes">
-        <link rel="stylesheet" href="./resources/ol.css">
-        <link rel="stylesheet" href="./resources/ol3-layerswitcher.css">
-        <link rel="stylesheet" href="./resources/qgis2web.css">
-        <style>
-        html, body {
-            background-color: #ffffff;
-        }
-        </style>
-        <style>
-        html, body, #map {
-            width: 100%;
-            height: 100%;
-            padding: 0;
-            margin: 0;
-        }
-        </style>
-        <title></title>
-    </head>
-    <body>
-        <div id="map">
-            <div id="popup" class="ol-popup">
-                <a href="#" id="popup-closer" class="ol-popup-closer"></a>
-                <div id="popup-content"></div>
-            </div>
-        </div>
-        <script src="resources/qgis2web_expressions.js"></script>
-        <script src="resources/polyfills.js"></script>
-        <script src="./resources/rbush.min.js"></script>
-        <script src="./resources/labelgun.min.js"></script>
-        <script src="./resources/functions.js"></script>
-        <script src="./resources/ol.js"></script>
-        <script src="./resources/ol3-layerswitcher.js"></script>
-        <script src="layers/ArtsEntertainment_0.js"></script><script src="layers/Food_1.js"></script><script src="layers/Nightlife_2.js"></script><script src="layers/Education_3.js"></script><script src="layers/Office_4.js"></script><script src="layers/Recriation_5.js"></script><script src="layers/Shops_6.js"></script><script src="layers/Travel_7.js"></script><script src="layers/livehoods_8.js"></script><script src="layers/vk_livehoods_venues_9.js"></script>
-        <script src="styles/ArtsEntertainment_0_style.js"></script><script src="styles/Food_1_style.js"></script><script src="styles/Nightlife_2_style.js"></script><script src="styles/Education_3_style.js"></script><script src="styles/Office_4_style.js"></script><script src="styles/Recriation_5_style.js"></script><script src="styles/Shops_6_style.js"></script><script src="styles/Travel_7_style.js"></script><script src="styles/livehoods_8_style.js"></script><script src="styles/vk_livehoods_venues_9_style.js"></script>
-        <script src="./layers/layers.js" type="text/javascript"></script> 
-        <script src="./resources/qgis2web.js"></script>
-        <script src="./resources/Autolinker.min.js"></script>
-    </body>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>
+		Livehoods-SPB
+	</title>
+
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"
+   integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
+   crossorigin=""/>
+
+   <!-- Make sure you put this AFTER Leaflet's CSS -->
+ 	<script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"
+   integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
+   crossorigin=""></script>
+</head>
+<body>
+	 <div id="mapid" style="height: 97.7vh; width: 97.5vw;">
+	 	
+	 </div>
+
+	 <script type="text/javascript">
+	 	var mymap = L.map('mapid').setView([39.74739, -105], 13);
+
+	 	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+		    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+		    maxZoom: 18,
+		    id: 'mapbox.streets',
+		    accessToken: 'pk.eyJ1Ijoia29udWNob3ZhcnRlbSIsImEiOiJjajhoOGJmZmQwMDltMndrbnhnY3J5andvIn0.9iiSiT1X3i5zSU4YTr9c9w'
+		}).addTo(mymap);
+
+		var geojsonFeature = {
+		    "type": "Feature",
+		    "properties": {
+		        "name": "Coors Field",
+		        "amenity": "Baseball Stadium",
+		        "popupContent": "This is where the Rockies play!"
+		    },
+		    "geometry": {
+		        "type": "Point",
+		        "coordinates": [-104.99404, 39.75621]
+		    }
+		};
+
+		var myLines = [{
+		    "type": "LineString",
+		    "coordinates": [[-100, 40], [-105, 45], [-110, 55]]
+		}, {
+		    "type": "LineString",
+		    "coordinates": [[-105, 40], [-110, 45], [-115, 55]]
+		}];
+
+		L.geoJSON(geojsonFeature).addTo(mymap);
+
+	 </script>
+
+</body>
 </html>
