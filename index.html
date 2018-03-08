@@ -15,6 +15,7 @@
    crossorigin=""></script>
 
    <script type="text/javascript" src='data/venues.geojson'></script>
+   <script type="text/javascript" src='data/areas.geojson'></script>
 </head>
 <body>
 	 <div id="mapid" style="height: 97.7vh; width: 97.5vw;">
@@ -32,7 +33,155 @@
 		    accessToken: 'pk.eyJ1Ijoia29udWNob3ZhcnRlbSIsImEiOiJjajhoOGJmZmQwMDltMndrbnhnY3J5andvIn0.9iiSiT1X3i5zSU4YTr9c9w'
 		}).addTo(map);
 
-	 
+		//get color
+		function getColor(id){
+
+			switch(id) {
+    			case 0: return "#1fd9d3";
+				case 1: return "#ee6b7b";
+				case 2: return "#4d01ff";
+				case 3: return "#e3c331";
+				case 4: return  "#e5218d";
+				case 5: return "#a4dc6f";
+				case 6: return "#b5c849";
+				case 7: return "#ea33d8";
+				case 8: return "#2f3dd7";
+				case 9: return "#91ed66";
+				case 10: return "#6f65d9";
+				case 11: return "#6f65d9";
+				case 12: return "#ce3462";
+				case 13: return "#c95e76";
+				case 14: return  "#4527dd";
+				case 15: return  "#8316f0";
+				case 16: return  "#3bec5e";
+				case 17: return  "#69eb78";
+				case 18: return  "#c48aea";
+				case 19: return  "#e07ec4";
+				case 20: return  "#17acf0";
+				case 21: return  "#39ca0d";
+				case 22: return  "#39ca0d";
+				case 23: return  "#fd9000";
+				case 24: return  "#51e0b8";
+				case 25: return  "#ec1d1d";
+				case 26: return  "#85cf23";
+				case 27: return  "#cebc18";
+				case 28: return  "#ccb36f";
+				case 29: return  "#ccb36f";
+				case 30: return  "#82e085";
+				case 31: return  "#eec083";
+				case 32: return  "#4fdaca";
+				case 33: return  "#ed9157";
+				case 34: return  "#194fe1";
+				case 35: return  "#a848d5";
+				case 36: return  "#7cd477";
+				case 37: return  "#d33ced";
+				case 38: return  "#96e00d";
+				case 39: return  "#a848d5";
+				case 40: return  "#ca4276";
+				case 41: return  "#d27952";
+				case 42: return  "#75d4f0";
+				case 43: return  "#7989d1";
+				case 44: return  "#58d0e2";
+				case 45: return  "#58d0e2";
+				case 46: return  "#01eeff";
+				case 47: return  "#f3ff01";
+				case 48: return  "#d29524";
+				case 49: return  "#e134a2";
+				case 50: return  "#e52d24";
+				case 51: return  "#5eccd2";
+				case 52: return  "#42ed72";
+				case 53: return  "#e8b283";
+				case 54: return  "#7e5ce6";
+				case 55: return  "#60b4eb";
+				case 56: return  "#e55b9b";
+				case 57: return  "#d65fde";
+				case 58: return  "#9fcd21";
+				case 59: return  "#f0f313";
+				case 60: return  "#08ed2a";
+				case 61: return  "#f13e12";
+				case 62: return  "#e44046";
+				case 63: return  "#3bcb97";
+				case 64: return  "#3bcb97";
+				case 65: return  "#e4e26a";
+				case 66: return  "#c54de9";
+				case 67: return  "#ff0178";
+				case 68: return  "#80a4d3";
+				case 69: return  "#89f0b7";
+    		};
+		}
+
+
+		//show areas
+
+		var highlitedArea = null;
+
+		function dropHiglite(){
+			areas.setStyle({
+				opacity: 0,
+				fillOpacity: 0
+			})
+		}
+
+		function zoomToFeature(e) {
+		    map.fitBounds(e.target.getBounds());
+		}	
+
+		function highliteArea(e){
+
+			dropHiglite();
+
+			var layer = e.target;
+
+			layer.setStyle({
+				opacity: 1,
+				fillOpacity: 0.3
+			})
+		   
+		}
+
+
+		function onEachAreaFeature(feature, layer){
+
+			layer.on({
+				click: highliteArea
+			})
+
+			var popupContent = "";
+
+			if (feature.properties) {
+				popupContent += ("<p>value:") + feature.properties.value.toString() + "</p>";
+				popupContent += ("<p>Arts & Entertainment: ") + feature.properties["Arts & Entertainment"].toString() + "</p>";
+				popupContent += ("<p>College & University: ") + feature.properties["College & University"].toString() + "</p>";
+				popupContent += ("<p>Food: ") + feature.properties["Food"].toString() + "</p>";
+				popupContent += ("<p>Nightlife Spot: ") + feature.properties["Nightlife Spot"].toString() + "</p>";
+				popupContent += ("<p>Professional & Other Places: ") + feature.properties["Professional & Other Places"].toString() + "</p>";
+				popupContent += ("<p>Residence: ") + feature.properties["Residence"].toString() + "</p>";
+				popupContent += ("<p>Shop & Service: ") + feature.properties["Shop & Service"].toString() + "</p>";
+				popupContent += ("<p>Travel & Transport: ") + feature.properties["Travel & Transport"].toString() + "</p>";
+			}
+
+			layer.bindPopup(popupContent);
+		};
+
+		var areas = L.geoJSON(areas, {
+			onEachFeature: onEachAreaFeature,
+
+			style: function(feature) {
+
+				var style = {opacity: 0, fillOpacity: 0};
+
+				var color =  getColor(feature.properties.value);
+
+    			style["color"] = color;
+
+    			return style;
+    		}
+
+		}).addTo(map);
+
+
+
+		//show venues	 
 	 	var geojsonMarkerOptions = {
 			    radius: 3,
 			    color: "#000",
@@ -41,97 +190,36 @@
 			    fillOpacity: 0.8
 			};
 
-		function onEachFeature(feature, layer) {
-			
+		function onEachVenueFeature(feature, layer) {
+			var popupContent = ""
+
 			if (feature.properties && feature.properties.title) {
-				var popupContent = feature.properties.title;
+				popupContent += feature.properties.label.toString();
+				popupContent += feature.properties.title;
+
 			}
 
 			layer.bindPopup(popupContent);
 		}
 
 		L.geoJSON(venues, {
-			onEachFeature: onEachFeature,
+			onEachFeature: onEachVenueFeature,
 
 			pointToLayer: function (feature, latlng) {
         		return L.circleMarker(latlng, geojsonMarkerOptions);
     		},
 
     		style: function(feature) {
-    			switch(feature.properties.label) {
-    				case 0: return {fillColor: "#1fd9d3"};
-					case 1: return {fillColor: "#ee6b7b"};
-					case 2: return {fillColor: "#4d01ff"};
-					case 3: return {fillColor: "#e3c331"};
-					case 4: return {fillColor: "#e5218d"};
-					case 5: return {fillColor: "#a4dc6f"};
-					case 6: return {fillColor: "#b5c849"};
-					case 7: return {fillColor: "#ea33d8"};
-					case 8: return {fillColor: "#2f3dd7"};
-					case 9: return {fillColor: "#91ed66"};
-					case 10: return {fillColor: "#6f65d9"};
-					case 11: return {fillColor: "#6f65d9"};
-					case 12: return {fillColor: "#ce3462"};
-					case 13: return {fillColor: "#c95e76"};
-					case 14: return {fillColor:"#4527dd"};
-					case 15: return {fillColor:"#8316f0"};
-					case 16: return {fillColor:"#3bec5e"};
-					case 17: return {fillColor:"#69eb78"};
-					case 18: return {fillColor:"#c48aea"};
-					case 19: return {fillColor:"#e07ec4"};
-					case 20: return {fillColor:"#17acf0"};
-					case 21: return {fillColor:"#39ca0d"};
-					case 22: return {fillColor:"#39ca0d"};
-					case 23: return {fillColor:"#fd9000"};
-					case 24: return {fillColor:"#51e0b8"};
-					case 25: return {fillColor:"#ec1d1d"};
-					case 26: return {fillColor:"#85cf23"};
-					case 27: return {fillColor:"#cebc18"};
-					case 28: return {fillColor:"#ccb36f"};
-					case 29: return {fillColor:"#ccb36f"}
-					case 30: return {fillColor:"#82e085"};
-					case 31: return {fillColor:"#eec083"};
-					case 32: return {fillColor:"#4fdaca"};
-					case 33: return {fillColor:"#ed9157"};
-					case 34: return {fillColor:"#194fe1"};
-					case 35: return {fillColor:"#a848d5"};
-					case 36: return {fillColor:"#7cd477"};
-					case 37: return {fillColor:"#d33ced"};
-					case 38: return {fillColor:"#96e00d"};
-					case 39: return {fillColor:"#a848d5"};
-					case 40: return {fillColor:"#ca4276"};
-					case 41: return {fillColor:"#d27952"};
-					case 42: return {fillColor:"#75d4f0"};
-					case 43: return {fillColor:"#7989d1"};
-					case 44: return {fillColor:"#58d0e2"};
-					case 45: return {fillColor:"#58d0e2"};
-					case 46: return {fillColor:"#01eeff"};
-					case 47: return {fillColor:"#f3ff01"};
-					case 48: return {fillColor:"#d29524"};
-					case 49: return {fillColor:"#e134a2"};
-					case 50: return {fillColor:"#e52d24"};
-					case 51: return {fillColor:"#5eccd2"};
-					case 52: return {fillColor:"#42ed72"};
-					case 53: return {fillColor:"#e8b283"};
-					case 54: return {fillColor:"#7e5ce6"};
-					case 55: return {fillColor:"#60b4eb"};
-					case 56: return {fillColor:"#e55b9b"};
-					case 57: return {fillColor:"#d65fde"};
-					case 58: return {fillColor:"#9fcd21"};
-					case 59: return {fillColor:"#f0f313"};
-					case 60: return {fillColor:"#08ed2a"};
-					case 61: return {fillColor:"#f13e12"};
-					case 62: return {fillColor:"#e44046"};
-					case 63: return {fillColor:"#3bcb97"};
-					case 64: return {fillColor:"#3bcb97"};
-					case 65: return {fillColor:"#e4e26a"};
-					case 66: return {fillColor:"#c54de9"};
-					case 67: return {fillColor:"#ff0178"};
-					case 68: return {fillColor:"#80a4d3"};
-					case 69: return {fillColor:"#89f0b7"};
-    			}
+    			var style = {};
+    			style["fillColor"] = getColor(feature.properties.label);
+    			return style;
     		}
-		}).addTo(map);
+
+		}).addTo(map); 
+
+		
+
+
 
 	 </script>
 
