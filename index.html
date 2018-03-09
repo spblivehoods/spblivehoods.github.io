@@ -14,8 +14,11 @@
    integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
    crossorigin=""></script>
 
+   <link rel="stylesheet" type="text/css" href="main.css">
+
    <script type="text/javascript" src='data/venues.geojson'></script>
    <script type="text/javascript" src='data/areas.geojson'></script>
+
 </head>
 <body>
 	 <div id="mapid" style="height: 97.7vh; width: 97.5vw;">
@@ -110,77 +113,6 @@
     		};
 		}
 
-
-		//show areas
-
-		var highlitedArea = null;
-
-		function dropHiglite(){
-			areas.setStyle({
-				opacity: 0,
-				fillOpacity: 0
-			})
-		}
-
-		function zoomToFeature(e) {
-		    map.fitBounds(e.target.getBounds());
-		}	
-
-		function highliteArea(e){
-
-			dropHiglite();
-
-			var layer = e.target;
-
-			layer.setStyle({
-				opacity: 1,
-				fillOpacity: 0.3
-			})
-		   
-		}
-
-
-		function onEachAreaFeature(feature, layer){
-
-			layer.on({
-				click: highliteArea
-			})
-
-			var popupContent = "";
-
-			if (feature.properties) {
-				popupContent += ("<p>value:") + feature.properties.value.toString() + "</p>";
-				popupContent += ("<p>Arts & Entertainment: ") + feature.properties["Arts & Entertainment"].toString() + "</p>";
-				popupContent += ("<p>College & University: ") + feature.properties["College & University"].toString() + "</p>";
-				popupContent += ("<p>Food: ") + feature.properties["Food"].toString() + "</p>";
-				popupContent += ("<p>Nightlife Spot: ") + feature.properties["Nightlife Spot"].toString() + "</p>";
-				popupContent += ("<p>Professional & Other Places: ") + feature.properties["Professional & Other Places"].toString() + "</p>";
-				popupContent += ("<p>Residence: ") + feature.properties["Residence"].toString() + "</p>";
-				popupContent += ("<p>Shop & Service: ") + feature.properties["Shop & Service"].toString() + "</p>";
-				popupContent += ("<p>Travel & Transport: ") + feature.properties["Travel & Transport"].toString() + "</p>";
-			}
-
-			layer.bindPopup(popupContent);
-		};
-
-		var areas = L.geoJSON(areas, {
-			onEachFeature: onEachAreaFeature,
-
-			style: function(feature) {
-
-				var style = {opacity: 0, fillOpacity: 0};
-
-				var color =  getColor(feature.properties.value);
-
-    			style["color"] = color;
-
-    			return style;
-    		}
-
-		}).addTo(map);
-
-
-
 		//show venues	 
 	 	var geojsonMarkerOptions = {
 			    radius: 3,
@@ -194,7 +126,6 @@
 			var popupContent = ""
 
 			if (feature.properties && feature.properties.title) {
-				popupContent += feature.properties.label.toString();
 				popupContent += feature.properties.title;
 
 			}
@@ -215,7 +146,123 @@
     			return style;
     		}
 
-		}).addTo(map); 
+		}).addTo(map);
+
+
+		//show areas
+
+		var selectedArea = null;
+
+		function dropHiglite(){
+			areas.setStyle({
+				opacity: 0,
+				fillOpacity: 0
+			})
+		}
+
+
+		function zoomToFeature(e) {
+		    map.fitBounds(e.target.getBounds());
+		}	
+
+		function highliteArea(e){
+
+			var layer = e.target;
+
+			layer.setStyle({
+				opacity: 1,
+				fillOpacity: 0.3
+			})
+		   
+		}
+
+		function resetHighlight(e) {
+			var layer = e.target;
+			if (layer != selectedArea){
+		    	areas.resetStyle(layer);
+		    }
+		}
+
+		function selectArea(e){
+
+			var layer = e.target;
+			
+			dropHiglite();
+
+			highliteArea(e);
+
+			info.update(e.target.feature.properties);
+
+			selectedArea = e.target;
+		}
+
+
+
+		function onEachAreaFeature(feature, layer){
+
+			layer.on({
+				mouseover: highliteArea,
+        		mouseout: resetHighlight,
+				click: selectArea
+			})
+
+		};
+
+		var areas = L.geoJSON(areas, {
+			onEachFeature: onEachAreaFeature,
+
+			style: function(feature) {
+
+				var style = {opacity: 0, fillOpacity: 0};
+
+				var color =  getColor(feature.properties.value);
+
+    			style["color"] = color;
+
+    			return style;
+    		},
+
+    		
+
+		}).addTo(map);
+
+
+		//info control
+		var info = L.control();
+
+		info.setPosition('topleft');
+
+		info.onAdd = function (map) {
+		    this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+		    this.update();
+		    return this._div;
+		};
+
+		// method that we will use to update the control based on feature properties passed
+		info.update = function (props) {
+
+		    //this._div.innerHTML = '<h4>Areas #' + (props ? props.value.toString() + '</h4>' : '???</h4>');
+
+		    var popupContent = '<h4>Areas #' + (props ? props.value.toString() + '</h4>' : '???</h4>');
+
+			if (props) {
+				//popupContent += ("<p>value:") + props.value.toString() + "</p>";
+				popupContent += ("<p>Arts & Entertainment: ") + props["Arts & Entertainment"].toString() + "</p>";
+				popupContent += ("<p>College & University: ") + props["College & University"].toString() + "</p>";
+				popupContent += ("<p>Food: ") + props["Food"].toString() + "</p>";
+				popupContent += ("<p>Nightlife Spot: ") + props["Nightlife Spot"].toString() + "</p>";
+				popupContent += ("<p>Professional & Other Places: ") + props["Professional & Other Places"].toString() + "</p>";
+				popupContent += ("<p>Residence: ") + props["Residence"].toString() + "</p>";
+				popupContent += ("<p>Shop & Service: ") + props["Shop & Service"].toString() + "</p>";
+				popupContent += ("<p>Travel & Transport: ") + props["Travel & Transport"].toString() + "</p>";
+			}
+
+			this._div.innerHTML = popupContent;
+
+
+		};
+
+		info.addTo(map);
 
 		
 
