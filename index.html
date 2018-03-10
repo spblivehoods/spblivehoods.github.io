@@ -15,14 +15,19 @@
    crossorigin=""></script>
 
    <link rel="stylesheet" type="text/css" href="main.css">
+   <script src="https://d3js.org/d3.v4.min.js"></script>
 
    <script type="text/javascript" src='data/venues.geojson'></script>
    <script type="text/javascript" src='data/areas.geojson'></script>
 
 </head>
 <body>
-	 <div id="mapid" style="height: 97.7vh; width: 97.5vw;">
+	 <div id="mapid" style="height: 97.7vh; width: 97.5vw; z-index: 0">
 	 	
+	 </div>
+
+	 <div class="info">
+	 	<p>INFO</p>
 	 </div>
 
 	 <script type="text/javascript">
@@ -191,7 +196,8 @@
 
 			highliteArea(e);
 
-			info.update(e.target.feature.properties);
+			updateInfo(e.target.feature.properties);
+			//info.update(e.target.feature.properties);
 
 			selectedArea = e.target;
 		}
@@ -228,9 +234,101 @@
 
 
 		//info control
+
+		var x = d3.scaleLinear()
+ 			.range([0, 200]);
+
+
+ 		function getAreaId(props){
+ 			var data = {};
+
+ 			if(props){
+ 				data["id"] = props.value;
+ 			}
+
+ 			return data;
+ 		}
+
+ 		function getFuncData(props){
+ 			var data = {};
+
+ 			if(props){
+ 				data["Arts & Entertainment"] = props["Arts & Entertainment"];
+ 				data["College & University"] = props["College & University"];
+ 				data["Food"] = props["Food"];
+ 				data["Nightlife Spot"] = props["Nightlife Spot"];
+ 				data["Outdoors & Recreation"] = props["Outdoors & Recreation"];
+ 				data["Professional & Other Places"] = props["Professional & Other Places"];
+ 				data["Residence"] = props["Residence"];
+ 				data["Shop & Service"] = props["Shop & Service"];
+ 				data["Travel & Transport"] = props["Travel & Transport"];
+ 			}
+
+ 			return data;
+ 		}
+
+
+ 		function getAreaData(props){
+ 			
+ 			var func = getFuncData(props);
+
+ 			var data = [];
+
+ 			if (func) {
+ 				Object.keys(func).forEach(function(key,index){
+ 					newObj = {"name": key, "number": func[key]};
+ 					data.push(newObj);
+ 				})
+ 			}
+
+ 			return data;
+ 		}
+ 		
+ 		function getBarText(d,t){
+ 			return t.toString() + " " + d.toString();
+ 		}
+
+		function updateInfo(props){
+
+			if (props){
+			
+				var id  = getAreaId(props);
+				var data = getAreaData(props);
+				var func = getFuncData(props);
+
+				x.domain([0,d3.sum(Object.values(func))]);
+
+				if (!selectedArea){
+					d3.select('.info')
+						.selectAll('div')
+							.data(data)
+						.enter().append('div')
+						.style("width", function(d) { return x(d.number) + "px"; })
+			    		.text(function(d){return d.number + " (" + d.number.toString()} + ")");
+				};
+
+
+				var bars = d3.select('.info').selectAll('div').data(data);
+
+				bars.exit().remove();
+
+				bars.enter().append('div');
+						
+			    bars.transition()
+			    	.duration(500)
+			    	.style("width", function(d) { return x(d.number) + "px"; })
+			    	.text(function(d) { return d.name + " (" + d.number.toString() + ")"});
+		    }
+		}; 
+
+		/*
 		var info = L.control();
 
 		info.setPosition('topleft');
+
+		var x = d3.scaleLinear()
+		    .range([0, 200]);
+
 
 		info.onAdd = function (map) {
 		    this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
@@ -241,8 +339,8 @@
 		// method that we will use to update the control based on feature properties passed
 		info.update = function (props) {
 
-		    //this._div.innerHTML = '<h4>Areas #' + (props ? props.value.toString() + '</h4>' : '???</h4>');
 
+			/*
 		    var popupContent = '<h4>Areas #' + (props ? props.value.toString() + '</h4>' : '???</h4>');
 
 			if (props) {
@@ -258,11 +356,26 @@
 			}
 
 			this._div.innerHTML = popupContent;
+			
+			if (props){
+				alert(props.value);
 
+				var data = Object.values(props);
 
+				x.domain([0,d3.sum(data)])
+
+				var bars = d3.select('.info').selectAll('div').data(data);
+
+				bars.enter().append("div")
+						.style("width", function(d) { return x(d) + "px"; })
+			    		.text(function(d) { return d; });
+
+			    bars.exit().remove();
+		    }
 		};
 
 		info.addTo(map);
+		*/
 
 		
 
