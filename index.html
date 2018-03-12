@@ -27,7 +27,7 @@
 	 </div>
 
 	 <div class="info">
-	 	<p>INFO</p>
+	 	<p> Click to area </p>
 	 </div>
 
 	 <script type="text/javascript">
@@ -132,7 +132,6 @@
 
 			if (feature.properties && feature.properties.title) {
 				popupContent += feature.properties.title;
-
 			}
 
 			layer.bindPopup(popupContent);
@@ -240,13 +239,13 @@
 
 
  		function getAreaId(props){
- 			var data = {};
+ 			var id
 
  			if(props){
- 				data["id"] = props.value;
+ 				id = props.value.toString();
  			}
 
- 			return data;
+ 			return id;
  		}
 
  		function getFuncData(props){
@@ -299,6 +298,10 @@
 				x.domain([0,d3.sum(Object.values(func))]);
 
 				if (!selectedArea){
+
+					d3.select('.info p')
+						.text("Area №" + id);
+
 					d3.select('.info')
 						.selectAll('div')
 							.data(data)
@@ -307,6 +310,7 @@
 			    		.text(function(d){return d.number + " (" + d.number.toString()} + ")");
 				};
 
+				area_id = d3.select('.info p').text("Area №" + id);
 
 				var bars = d3.select('.info').selectAll('div').data(data);
 
