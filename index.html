@@ -19,6 +19,7 @@
 
    <script type="text/javascript" src='data/venues.geojson'></script>
    <script type="text/javascript" src='data/areas.geojson'></script>
+   <script type="text/javascript" src='data/metro_stations.geojson'></script>
 
 </head>
 <body>
@@ -28,6 +29,7 @@
 
 	 <div class="info">
 	 	<p> Click to area </p>
+	 	<div class="functions"></div>
 	 </div>
 
 	 <script type="text/javascript">
@@ -231,6 +233,26 @@
 
 		}).addTo(map);
 
+		//show metro
+		var metroIcon = L.icon({
+			iconUrl: 'img/metro_icon.svg',
+
+			iconSize:     [38, 95], // size of the icon
+		    shadowSize:   [50, 64], // size of the shadow
+		    iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+		    shadowAnchor: [4, 62],  // the same for the shadow
+		    popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+		})
+
+
+		L.geoJSON(metro_stations, {
+
+			pointToLayer: function (feature, latlng) {
+        		return L.marker(latlng, {icon: metroIcon});
+    		}
+
+		}).addTo(map);
+
 
 		//info control
 
@@ -302,7 +324,7 @@
 					d3.select('.info p')
 						.text("Area №" + id);
 
-					d3.select('.info')
+					d3.select('.functions')
 						.selectAll('div')
 							.data(data)
 						.enter().append('div')
@@ -312,7 +334,7 @@
 
 				area_id = d3.select('.info p').text("Area №" + id);
 
-				var bars = d3.select('.info').selectAll('div').data(data);
+				var bars = d3.select('.functions').selectAll('div').data(data);
 
 				bars.exit().remove();
 
@@ -324,66 +346,6 @@
 			    	.text(function(d) { return d.name + " (" + d.number.toString() + ")"});
 		    }
 		}; 
-
-		/*
-		var info = L.control();
-
-		info.setPosition('topleft');
-
-		var x = d3.scaleLinear()
-		    .range([0, 200]);
-
-
-		info.onAdd = function (map) {
-		    this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
-		    this.update();
-		    return this._div;
-		};
-
-		// method that we will use to update the control based on feature properties passed
-		info.update = function (props) {
-
-
-			/*
-		    var popupContent = '<h4>Areas #' + (props ? props.value.toString() + '</h4>' : '???</h4>');
-
-			if (props) {
-				//popupContent += ("<p>value:") + props.value.toString() + "</p>";
-				popupContent += ("<p>Arts & Entertainment: ") + props["Arts & Entertainment"].toString() + "</p>";
-				popupContent += ("<p>College & University: ") + props["College & University"].toString() + "</p>";
-				popupContent += ("<p>Food: ") + props["Food"].toString() + "</p>";
-				popupContent += ("<p>Nightlife Spot: ") + props["Nightlife Spot"].toString() + "</p>";
-				popupContent += ("<p>Professional & Other Places: ") + props["Professional & Other Places"].toString() + "</p>";
-				popupContent += ("<p>Residence: ") + props["Residence"].toString() + "</p>";
-				popupContent += ("<p>Shop & Service: ") + props["Shop & Service"].toString() + "</p>";
-				popupContent += ("<p>Travel & Transport: ") + props["Travel & Transport"].toString() + "</p>";
-			}
-
-			this._div.innerHTML = popupContent;
-			
-			if (props){
-				alert(props.value);
-
-				var data = Object.values(props);
-
-				x.domain([0,d3.sum(data)])
-
-				var bars = d3.select('.info').selectAll('div').data(data);
-
-				bars.enter().append("div")
-						.style("width", function(d) { return x(d) + "px"; })
-			    		.text(function(d) { return d; });
-
-			    bars.exit().remove();
-		    }
-		};
-
-		info.addTo(map);
-		*/
-
-		
-
-
 
 	 </script>
 

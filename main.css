@@ -16,7 +16,11 @@
     color: #777;
 }
 
-.info div {
+.info .functions {
+	margin-bottom: 20px;
+}
+
+.info .functions div {
 	  font: 10px sans-serif;
 	  background-color: steelblue;
 	  text-align: left;
