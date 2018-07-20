@@ -54,11 +54,106 @@
 		  });
 
 		  if (states.length > 0) {
-		    console.log(states[0].properties)
+		    updateInfo(states[0].properties)
 		  } else {
 		    console.log('404')
 		  }
 		});
+
+
+
+		//info control
+
+		var x = d3.scaleLinear()
+ 			.range([0, 200]);
+
+
+ 		function getAreaId(props){
+ 			var id
+
+ 			if(props){
+ 				id = props.value.toString();
+ 			}
+
+ 			return id;
+ 		}
+
+ 		function getFuncData(props){
+ 			var data = {};
+
+ 			if(props){
+ 				data["Arts & Entertainment"] = props["Arts & Entertainment"];
+ 				data["College & University"] = props["College & University"];
+ 				data["Food"] = props["Food"];
+ 				data["Nightlife Spot"] = props["Nightlife Spot"];
+ 				data["Outdoors & Recreation"] = props["Outdoors & Recreation"];
+ 				data["Professional & Other Places"] = props["Professional & Other Places"];
+ 				data["Residence"] = props["Residence"];
+ 				data["Shop & Service"] = props["Shop & Service"];
+ 				data["Travel & Transport"] = props["Travel & Transport"];
+ 			}
+
+ 			return data;
+ 		}
+
+
+ 		function getAreaData(props){
+ 			
+ 			var func = getFuncData(props);
+
+ 			var data = [];
+
+ 			if (func) {
+ 				Object.keys(func).forEach(function(key,index){
+ 					newObj = {"name": key, "number": func[key]};
+ 					data.push(newObj);
+ 				})
+ 			}
+
+ 			return data;
+ 		}
+ 		
+ 		function getBarText(d,t){
+ 			return t.toString() + " " + d.toString();
+ 		}
+
+		function updateInfo(props){
+
+			if (props){
+			
+				var id  = getAreaId(props);
+				var data = getAreaData(props);
+				var func = getFuncData(props);
+
+				x.domain([0,d3.sum(Object.values(func))]);
+
+				if (!selectedArea){
+
+					d3.select('.info p')
+						.text("Area №" + id);
+
+					d3.select('.functions')
+						.selectAll('div')
+							.data(data)
+						.enter().append('div')
+						.style("width", function(d) { return x(d.number) + "px"; })
+			    		.text(function(d){return d.number + " (" + d.number.toString()} + ")");
+				};
+
+				area_id = d3.select('.info p').text("Area №" + id);
+
+				var bars = d3.select('.functions').selectAll('div').data(data);
+
+				bars.exit().remove();
+
+				bars.enter().append('div');
+						
+			    bars.transition()
+			    	.duration(500)
+			    	.style("width", function(d) { return x(d.number) + "px"; })
+			    	.text(function(d) { return d.name + " (" + d.number.toString() + ")"});
+		    }
+		}; 
 
 
 	 /**
