@@ -36,8 +36,9 @@
 
 	 	var map = L.map('mapid').setView([59.9451, 30.3717], 13);
 
-	 	L.tileLayer('https://api.mapbox.com/styles/v1/konuchovartem/cjjtpqh8r3kuy2rqnmlagk19f/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoia29udWNob3ZhcnRlbSIsImEiOiJjajhoOGJmZmQwMDltMndrbnhnY3J5andvIn0.9iiSiT1X3i5zSU4YTr9c9w',
+	 	L.tileLayer('https://api.mapbox.com/styles/v1/konuchovartem/cjjtpqh8r3kuy2rqnmlagk19f/tiles/256/{z}/{x}/{y}?access_token={accessToken}', {
 		    maxZoom: 18,
+		    accessToken: 'pk.eyJ1Ijoia29udWNob3ZhcnRlbSIsImEiOiJjajhoOGJmZmQwMDltMndrbnhnY3J5andvIn0.9iiSiT1X3i5zSU4YTr9c9w',
 		}).addTo(map);
 
 		//get color
