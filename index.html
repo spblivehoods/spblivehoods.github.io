@@ -17,13 +17,17 @@
    <link rel="stylesheet" type="text/css" href="main.css">
    <script src="https://d3js.org/d3.v4.min.js"></script>
 
+   <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.js'></script>
+   <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.css' rel='stylesheet' />
+
+
    <script type="text/javascript" src='data/venues.geojson'></script>
    <script type="text/javascript" src='data/areas.geojson'></script>
    <script type="text/javascript" src='data/metro_stations.geojson'></script>
 
 </head>
 <body>
-	 <div id="mapid" style="height: 97.7vh; width: 97.5vw; z-index: 0">
+	 <div id="map" style="height: 97.7vh; width: 97.5vw; z-index: 0">
 	 	
 	 </div>
 
@@ -32,7 +36,18 @@
 	 	<div class="functions"></div>
 	 </div>
 
+	 
+
+
 	 <script type="text/javascript">
+
+	 	mapboxgl.accessToken = 'pk.eyJ1Ijoia29udWNob3ZhcnRlbSIsImEiOiJjajhoOGJmZmQwMDltMndrbnhnY3J5andvIn0.9iiSiT1X3i5zSU4YTr9c9w';
+		var map = new mapboxgl.Map({
+		    container: 'map',
+		    style: 'mapbox://styles/konuchovartem/cjjtpqh8r3kuy2rqnmlagk19f'
+		});
+
+	 /**
 
 	 	var map = L.map('mapid').setView([59.9451, 30.3717], 13);
 
@@ -40,6 +55,7 @@
 		    maxZoom: 18,
 		    accessToken: 'pk.eyJ1Ijoia29udWNob3ZhcnRlbSIsImEiOiJjajhoOGJmZmQwMDltMndrbnhnY3J5andvIn0.9iiSiT1X3i5zSU4YTr9c9w',
 		}).addTo(map);
+
 
 		//get color
 		function getColor(id){
@@ -152,7 +168,7 @@
     		}
 
 		}).addTo(map);
-		*/
+	
 
 
 		//show areas
@@ -347,7 +363,9 @@
 		    }
 		}; 
 
+	 */
 	 </script>
+
 
 </body>
 </html>
