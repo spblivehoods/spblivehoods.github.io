@@ -151,7 +151,7 @@
 				bars.enter().append('div');
 						
 			    bars.transition()
-			    	.duration(500)
+			    	.duration(100)
 			    	.style("width", function(d) { return x(d.number) + "px"; })
 			    	.text(function(d) { return d.name + " (" + d.number.toString() + ")"});
 		    }
