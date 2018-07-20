@@ -47,6 +47,20 @@
 		    style: 'mapbox://styles/konuchovartem/cjjtpqh8r3kuy2rqnmlagk19f'
 		});
 
+		//add areas interactive
+		map.on('mousemove', function(e) {
+		  var states = map.queryRenderedFeatures(e.point, {
+		    layers: ['livehoods-original-areas']
+		  });
+
+		  if (states.length > 0) {
+		    console.log(states[0].properties)
+		  } else {
+		    console.log('404')
+		  }
+		});
+
+
 	 /**
 
 	 	var map = L.map('mapid').setView([59.9451, 30.3717], 13);
