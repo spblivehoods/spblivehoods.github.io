@@ -25,6 +25,7 @@
    <script type="text/javascript" src='data/venues.geojson'></script>
    <script type="text/javascript" src='data/areas.geojson'></script>
    <script type="text/javascript" src='data/metro_stations.geojson'></script>
+   <script type="text/javascript" src='data/original_alg_clasters_sim.json'></script>
 
 </head>
 <body>
@@ -33,8 +34,13 @@
 	 </div>
 
 	 <div class="info">
-	 	<p> Click to area </p>
-	 	<svg id="functions_barchart" style="height: 200px;">
+	 	<p id='selected_area'> Selected area - click to select</p>
+	 	<svg id="clusters_sim" style= "height:50px; width:200px;">
+	 		<g id = "sim_bar"></g>
+	 		<g id = "text"></g>
+	 	</svg>
+	 	<p id='hovered_area'> Hovered area - ??? </p>
+	 	<svg id="functions_barchart" style="height: 200px; width:200px">
 	 		<g id = 'bars'></g>
 	 		<g id = 'text'></g>
 	 	</svg>
@@ -68,7 +74,7 @@
 		}).addTo(map);
 		*/
 
-
+		var selected_area_id = -1;
 		var current_area_id = -1;
 		var current_hover_layer;
 
@@ -123,7 +129,6 @@
 
 			if (current_area_id != e.target.feature.properties.value){
 				updateInfo(e.target.feature.properties);
-				current_area_id = e.target.feature.properties.value;
 			}
 		   
 		}
@@ -131,6 +136,8 @@
 		function selectArea(e){
 
 			updateSelectedInfo(e.target.feature.properties);
+			
+
 		}
 
 
@@ -308,7 +315,7 @@
 
 				}).addTo(map);
 
-				area_id = d3.select('.info p').text("Area - " + id);
+				area_id = d3.select('.info #hovered_area').text("Hovered area - " + id);
 
 				var bars = d3.select('#functions_barchart #bars').selectAll('.bar').data(data);
 
@@ -324,6 +331,10 @@
 					.attr("height", y.bandwidth())
 					.attr("fill", "blue")
 
+				current_area_id = id;
+
+				show_sim(selected_area_id, current_area_id);
+
 				
 
 		    }
@@ -336,25 +347,7 @@
 				var data = getAreaData(props);
 				var func = getFuncData(props);
 
-				
-				if (!selectedArea){
-
-					d3.select('.info p')
-						.text("Area - " + id);
-
-					d3.select('#functions_barchart')
-						.selectAll('.bar')
-							.data(data)
-						.enter().append('rect')
-						.attr("class", "bar")
-						.attr("x", function(d){ return 0; })
-						.attr("y", function(d){ return y(d.name) - y.bandwidth() })
-						.attr("width", function(d) {return  x(d.number)})
-						.attr("height", y.bandwidth())
-			    		.text(function(d){return d.number + " (" + d.number.toString()} + ")");
-				};
-
-				area_id = d3.select('.info p').text("Area - " + id);
+				area_id = d3.select('.info #selected_area').text("Selected area - " + id);
 
 				var bars = d3.select('#functions_barchart #bars').selectAll('.selected_bar').data(data);
 
@@ -370,10 +363,54 @@
 					.attr("width", function(d) {return x(d.number)})
 					.attr("height", y.bandwidth())
 
+				selected_area_id = id;
+
 				
 
 		    }
 		}
+
+		//clusters similarity index
+		var sim_scale = d3.scaleLinear().range([0, 200]);
+		sim_scale.domain([0.0,1.0]);
+
+		function show_sim(selected_area_num, hovered_area_num){
+			if (selected_area_num != -1 && hovered_area_num != -1){
+				var data = [clusters_sim[selected_area_num][hovered_area_num]];
+
+				var sim_bar = d3.select("#clusters_sim #sim_bar").selectAll('.sim_bar').data(data);
+
+				sim_bar.exit().remove();
+
+				sim_bar.enter().append('rect').attr("class", "sim_bar");
+
+				sim_bar.transition()
+					.duration(100)
+					.attr("x", function(d){ return 0; })
+					.attr("y", function(d){ return 0; })
+					.attr("fill", "red")
+					.attr("width", function(d) {return sim_scale(d)})
+					.attr("height", y.bandwidth() * 2)
+
+				var sim_text = d3.select("#clusters_sim #text").selectAll('text').data(data);
+
+				sim_text.exit().remove();
+
+				sim_text.enter().append('text')
+				sim_text.transition()
+					.attr("x", function(d) {return 0;})
+					.attr("y", function(d) {return y.bandwidth() * 2;})
+					.attr("height", y.bandwidth())
+					.text(function(d){return "clusters similarity index - " + d})
+
+
+
+			}
+		}
+
+
+
+
 
 
 
