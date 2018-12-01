@@ -35,16 +35,20 @@
 	 </div>
 
 	 <div class="info">
+	 	<!--
 	 	<p><input name='layer' type='radio' value='qullab' checked> Qullab algorithm<p>
 	 	<p><input name='layer' type='radio' value='livehoods'> Livehoods algorithm</p>
+	 	-->
 
-	 	<p id='selected_area'> Selected area - click to select</p>
+	 	<!--<p id='selected_area'> Selected area - click to select</p> -->
+	 	<!--
 	 	<svg id="clusters_sim" style= "height:50px; width:200px;">
 	 		<g id = "sim_bar"></g>
 	 		<g id = "text"></g>
 	 	</svg>
-	 	<p id='hovered_area'> Hovered area - ??? </p>
-	 	<svg id="functions_barchart" style="height: 200px; width:200px">
+	 	-->
+	 	<p id='hovered_area'> Selected area - hover to select </p>
+	 	<svg id="functions_barchart" style="height: 200px; width:230px">
 	 		<g id = 'bars'></g>
 	 		<g id = 'text'></g>
 	 	</svg>
@@ -56,14 +60,9 @@
 	 <script type="text/javascript">
 
 	 	livehoods_style = 'mapbox://styles/konuchovartem/cjjtpqh8r3kuy2rqnmlagk19f';
-	 	qullab_style = 'mapbox://styles/konuchovartem/cjl52inbob8u22rqm4cu4t9fr';
+	 	//qullab_style = 'mapbox://styles/konuchovartem/cjl52inbob8u22rqm4cu4t9fr';
 
-	 	current_style = qullab_style;
-
-	 	var venues = quallab_venues;
-
-	 	var areas_layer = undefined;
-
+	 	/*
 	 	$('input[type=radio][name=layer]').change(function() {
 		    if (this.value == 'qullab') {
 		        current_style = qullab_style;
@@ -101,16 +100,39 @@
 		        
 		    }
 		});
+		*/
 
 		var accessToken = 'pk.eyJ1Ijoia29udWNob3ZhcnRlbSIsImEiOiJjajhoOGJmZmQwMDltMndrbnhnY3J5andvIn0.9iiSiT1X3i5zSU4YTr9c9w';
 
 		var map = L.map('map').setView([59.9451, 30.3717], 13);
+
+		var current_style = livehoods_style;
 
 		var gl = L.mapboxGL({
 		    accessToken: accessToken,
 		    style: current_style
 		}).addTo(map);
 
+		
+		var areas_layer = L.geoJSON(areas, {
+			onEachFeature: onEachAreaFeature,
+
+			style: function(feature) {
+
+				var style = {opacity: 0, fillOpacity: 0};
+
+				var color =  "#000";
+
+		    	style["color"] = color;
+
+		    	return style;
+			},
+
+		}).addTo(map);
+
+		venues = livehoods_venues;
+
+		/*
 		console.log('inner');
 
 		function update_map(){
@@ -122,15 +144,13 @@
 			    style: current_style
 			}).addTo(map);
 
-
 		}
-
+		*/
 
 		var selected_area_id = -1;
 		var current_area_id = -1;
 		var current_hover_layer;
 		var current_selected_layer;
-
 
 		//show areas
 
@@ -193,7 +213,7 @@
 
 			layer.bindPopup(popupContent);
 
-
+			/*
 			layer.on({
 				click: function(){
 					selected_areas = areas['features'].filter(function(a){return a["properties"]["value"] == feature.properties.label})
@@ -201,6 +221,7 @@
 				}
 				}
 			)
+			*/
 		}
 
 		
@@ -328,20 +349,26 @@
 				var bars = d3.select('#functions_barchart #bars').selectAll('.bar').data(data);
 
 				bars.exit().remove();
-
+				
 				bars.enter().append('rect').attr("class", "bar");
 						
 			    bars.transition()
 			    	.duration(100)
 			    	.attr("x", function(d){ return 0; })
-					.attr("y", function(d){ return y(d.name) -  y.bandwidth() })
+					.attr("y", function(d){ return y(d.name)})
 					.attr("width", function(d) {return x(d.number)})
 					.attr("height", y.bandwidth())
 					.attr("fill", color)
 
+				var text = d3.select('#functions_barchart #text').selectAll('text')
+					.each(function(e, i){
+				        //console.log(data[i].number)
+				        d3.select(this).text(data[i].name + " (" + data[i].number + ")")
+				    })
+
 				current_area_id = id;
 
-				show_sim(selected_area_id, current_area_id);
+				//show_sim(selected_area_id, current_area_id);
 
 				
 
