@@ -45,6 +45,9 @@
    crossorigin=""></script>
 
    <link rel="stylesheet" type="text/css" href="main.css">
+   <link href="https://fonts.googleapis.com/css?family=Noto+Sans:400,400i,700,700i&amp;subset=cyrillic"
+          rel="stylesheet">
+
    <script src="https://d3js.org/d3.v4.min.js"></script>
 
    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.js'></script>
@@ -58,13 +61,51 @@
    <script type="text/javascript" src='data/metro_stations.geojson'></script>
    <script type="text/javascript" src='data/original_alg_clasters_sim.json'></script>
 
+
 </head>
 <body>
-	 <div id="map" style="height: 97.7vh; width: 97.5vw; z-index: 0">
-	 	
-	 </div>
+	
 
-	 <div class="info">
+	<div class="headerInfo" onclick="toggleDescription(true)">
+    	<div class='header'>SPBLIVEHOODS</div>
+    	<div class='project_info' onclick="toggleDescription(true)"><img src="./src/info.svg" style="width:35px;height:35px;center"></div>
+    </div>
+    
+    <div id='description'>
+      <div class="tab">
+        <div class="tablinks" onclick="openTab(event,'project')" id="defaultOpen"> О ПРОЕКТЕ</div>
+        <!--<div class="tablinks" onclick="openTab(event,'method')"> МЕТОДОЛОГИЯ</div> -->
+        <button id="closeButton" class="tablinks" onclick="toggleDescription(false)">
+          <img src="./src/close.svg" style="width:33px;height:28px;">
+        </button>
+      </div>
+      <div id="project" class="tabcontent">
+      
+      	<p>На основании алгоритма <a href="http://livehoods.org/">Livehoods</a>, мы выделили кластеры с наиболее сильными пространственно-социальными связями и обозначаем их как вернакулярные районы, то есть такие, которые обусловлены не просто географической близостью заведений, а их социальной схожестью.</p>
+
+      	<p>Помимо схожих пользователей, вернакулярные районы имеют функциональную специфику - то есть, особый характер заведений, которые объединяются в кластер; районы можно описать как туристические, артистичные, кулинарные и подобные.</p>
+
+      	<p>Таким образом, алгоритм позволяет выявить районы города, в которых есть возможность для формирования местного сообщества и партнерства между предприятиями малого бизнеса.</p>
+
+      	<p>
+          <b>Контакты:</b><br/>
+          Email: <a href="mailto:Qullab.spb@gmail.com">Qullab.spb@gmail.com</a><br/>
+          Website: <a href="https://www.qullab.com/">qullab.com</a><br/>
+        </p>
+
+      	<p>
+          <b>Другие проекты:</b><br/>
+          Картирование эмоций города: <a href="https://imprecity.ru/analytics">imprecity.ru</a><br/>
+        </p>
+
+
+
+      </div>
+    </div>
+
+    <div id="map" style="height: 100vh; width: 100vw; z-index: 0"></div>
+
+	<div class="info">
 	 	<!--
 	 	<p><input name='layer' type='radio' value='qullab' checked> Qullab algorithm<p>
 	 	<p><input name='layer' type='radio' value='livehoods'> Livehoods algorithm</p>
@@ -90,53 +131,16 @@
 	 <script type="text/javascript">
 
 	 	livehoods_style = 'mapbox://styles/konuchovartem/cjjtpqh8r3kuy2rqnmlagk19f';
-	 	//qullab_style = 'mapbox://styles/konuchovartem/cjl52inbob8u22rqm4cu4t9fr';
-
-	 	/*
-	 	$('input[type=radio][name=layer]').change(function() {
-		    if (this.value == 'qullab') {
-		        current_style = qullab_style;
-		        update_map();
-
-		        if(areas_layer){areas_layer.remove()};
-		        if (current_hover_layer) {current_hover_layer.remove()};
-				if(current_selected_layer) {current_selected_layer.remove()};
-
-		        venues = quallab_venues;
-		        
-		    }
-		    else if (this.value == 'livehoods') {
-		        current_style = livehoods_style;
-		        update_map();
-
-
-		        var areas_layer = L.geoJSON(areas, {
-					onEachFeature: onEachAreaFeature,
-
-					style: function(feature) {
-
-						var style = {opacity: 0, fillOpacity: 0};
-
-						var color =  "#000";
-
-		    			style["color"] = color;
-
-		    			return style;
-		    		},
-
-				}).addTo(map);
-
-				venues = livehoods_venues
-		        
-		    }
-		});
-		*/
-
+	 	
 		var accessToken = 'pk.eyJ1Ijoia29udWNob3ZhcnRlbSIsImEiOiJjajhoOGJmZmQwMDltMndrbnhnY3J5andvIn0.9iiSiT1X3i5zSU4YTr9c9w';
 
-		var map = L.map('map').setView([59.9451, 30.3717], 13);
+		var map = L.map('map', {zoomControl: false}).setView([59.9451, 30.3717], 11);
 
 		var current_style = livehoods_style;
+
+		L.control.zoom({
+		     position:'bottomright'
+		}).addTo(map);
 
 		var gl = L.mapboxGL({
 		    accessToken: accessToken,
@@ -161,21 +165,6 @@
 		}).addTo(map);
 
 		venues = livehoods_venues;
-
-		/*
-		console.log('inner');
-
-		function update_map(){
-
-			gl.remove();
-
-			gl = L.mapboxGL({
-			    accessToken: accessToken,
-			    style: current_style
-			}).addTo(map);
-
-		}
-		*/
 
 		var selected_area_id = -1;
 		var current_area_id = -1;
@@ -242,16 +231,6 @@
 			}
 
 			layer.bindPopup(popupContent);
-
-			/*
-			layer.on({
-				click: function(){
-					selected_areas = areas['features'].filter(function(a){return a["properties"]["value"] == feature.properties.label})
-					updateSelectedInfo(selected_areas[0].properties);
-				}
-				}
-			)
-			*/
 		}
 
 		
@@ -489,6 +468,26 @@
 					.text(function(d){return "clusters similarity index - " + d})
 
 			}
+		}
+
+		function toggleDescription(show) {
+		  if(show) { description.style.left="0"; }
+		  else { description.style.left="-100%"; }
+		}
+
+
+		function openTab(evt,tabName) {
+		      var i, tabcontent, tablinks;
+		      tabcontent = document.getElementsByClassName("tabcontent");
+		      for (i = 0; i < tabcontent.length; i++) {
+		          tabcontent[i].style.display = "none";
+		      }
+		      tablinks = document.getElementsByClassName("tablinks");
+		    for (i = 0; i < tablinks.length; i++) {
+		        tablinks[i].className = tablinks[i].className.replace(" active", "");
+		    }
+		    document.getElementById(tabName).style.display = "block";
+		    evt.currentTarget.className += " active";
 		}
 
 	 </script>
