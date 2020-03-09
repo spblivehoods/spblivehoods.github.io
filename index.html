@@ -105,6 +105,7 @@
 
     <div id="map" style="height: 100vh; width: 100vw; z-index: 0"></div>
 
+<!--
 	<div class="info">
 	 	<!--
 	 	<p><input name='layer' type='radio' value='qullab' checked> Qullab algorithm<p>
@@ -117,13 +118,13 @@
 	 		<g id = "sim_bar"></g>
 	 		<g id = "text"></g>
 	 	</svg>
-	 	-->
+	 	
 	 	<p id='hovered_area'> Selected area - hover to select </p>
 	 	<svg id="functions_barchart" style="height: 200px; width:230px">
 	 		<g id = 'bars'></g>
 	 		<g id = 'text'></g>
 	 	</svg>
-	 </div>
+	 </div> -->
 
 	 
 
@@ -147,7 +148,7 @@
 		    style: current_style
 		}).addTo(map);
 
-		
+		/*
 		var areas_layer = L.geoJSON(areas, {
 			onEachFeature: onEachAreaFeature,
 
@@ -163,6 +164,7 @@
 			},
 
 		}).addTo(map);
+		*/
 
 		venues = livehoods_venues;
 
